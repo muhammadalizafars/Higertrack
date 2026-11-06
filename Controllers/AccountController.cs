@@ -31,7 +31,7 @@ namespace HigerTrack.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            return View();
+            return View("Auth");
         }
 
         [HttpPost]
@@ -40,7 +40,7 @@ namespace HigerTrack.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View("Auth", model);
             }
 
             var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
@@ -51,13 +51,13 @@ namespace HigerTrack.Controllers
             }
 
             ModelState.AddModelError(string.Empty, "Invalid Login Attempt.");
-            return View(model);
+            return View("Auth", model);
         }
 
         [HttpGet]
         public IActionResult Register()
         {
-            return View();
+            return View("Auth");
         }
 
         [HttpPost]
@@ -66,7 +66,7 @@ namespace HigerTrack.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View("Auth", model);
             }
 
             var user = new Users

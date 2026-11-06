@@ -1,5 +1,6 @@
+@model HigerTrack.ViewModels.DashboardViewModel
 @{
-    ViewData["Title"] = "Admin";
+    ViewData["Title"] = "Dashboard";
 }
 
 @section Styles {
@@ -8,60 +9,86 @@
 }
 
 <div class="main-content">
+    <!-- Stat Cards -->
+    <div class="stat-grid">
+        <div class="stat-card blue">
+            <div class="stat-icon blue">
+                <i class="bi bi-pin-angle-fill"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value">@Model.TotalPoints</div>
+                <div class="stat-label">Total Points</div>
+            </div>
+        </div>
+
+        <div class="stat-card green">
+            <div class="stat-icon green">
+                <i class="bi bi-person"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value">@Model.TotalUsers</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+        </div>
+
+        <div class="stat-card orange">
+            <div class="stat-icon orange">
+                <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value">@Model.PointsToday</div>
+                <div class="stat-label">Points Added Today</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map -->
     <div id="map"></div>
 
-    <div class="title-box">
-        <i class="bi bi-shield-lock-fill me-1"></i> Data Marker Admin
+    <!-- Recent Markers -->
+    <div class="title-box border">
+        <i class="bi bi-clock-history me-1"></i> Recently Added Markers
     </div>
 
     <div class="border">
-        <div class="custom-table-container">
-            <div class="search-add-container">
-                <div class="show-entries">
-                    <label>
-                        Show
-                        <select id="entriesSelect" class="form-select form-select-sm d-inline-block"
-                            style="width: auto;">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                        entries
-                    </label>
-                </div>
+        <div class="search-add-container">
+            <div class="show-entries">
+                <label>
+                    Show
+                    <select id="entriesSelect" class="form-select form-select-sm d-inline-block"
+                        style="width: auto;">
+                        <option value="5">5 items</option>
+                        <option value="10">10 items</option>
+                        <option value="25">25 items</option>
+                    </select>
+                </label>
+            </div>
 
-                <div class="search-add-actions d-flex gap-2 flex-wrap">
-                    <div class="search-box d-flex gap-2">
-                        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari..."
-                            style="width: 200px;">
-                        <button class="btn btn-primary btn-sm" id="btnSearch">
-                            <i class="bi bi-search me-1"></i> Cari
-                        </button>
-                    </div>
-
-
-
-                </div>
-
-                <div class="table-responsive mt-3">
-                    <table class="custom-table" id="markerTable">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Username</th>
-                                <th>Point</th>
-                                <th>Latitude , Longitude</th>
-                                <th>Foto</th>
-                                <th>Deskripsi</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                    <div class="pagination-container mt-3"></div>
-                </div>
+            <div class="search-add-actions d-flex gap-2 flex-wrap">
+                <input type="text" id="searchInput" class="form-control" placeholder="Cari marker..." />
+                <button class="btn-primary-custom" id="btnSearch">
+                    <i class="bi bi-search me-1"></i> Search
+                </button>
             </div>
         </div>
+
+        <div class="table-responsive mt-3">
+            <table class="custom-table" id="markerTable">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">No</th>
+                        <th>Created By</th>
+                        <th>Title</th>
+                        <th>Coordinates</th>
+                        <th style="width: 15%;">Image</th>
+                        <th style="text-align: right; width: 15%;">Description</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="pagination-container mt-3"></div>
     </div>
 </div>
 
@@ -71,7 +98,7 @@
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4jqcen5Xqrgck4V73aL6VepyKp2_wK1U&callback=initMap&libraries=marker&v=beta"
         async defer loading="async">
-        </script>
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/home.js"></script>

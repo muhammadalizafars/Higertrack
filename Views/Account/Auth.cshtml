@@ -1,0 +1,245 @@
+@using HigerTrack.ViewModels;
+@{
+    ViewData["Title"] = "Authentication";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/login.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="logo-container text-center">
+            <img src="~/img/Logo/LogoHigertrack.PNG" alt="Logo" class="logo-img" />
+            <h2 class="login-title" id="authTitle">Login Form</h2>
+        </div>
+
+        <div class="toggle-btn-group mb-3">
+            <button type="button" class="toggle-btn active" id="loginToggle" onclick="switchMode('login')">Login</button>
+            <button type="button" class="toggle-btn" id="registerToggle" onclick="switchMode('register')">Register</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div class="auth-form active" id="loginForm">
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
+                }
+
+                <input type="email" name="Email" class="form-control form-input" placeholder="Email Address" required />
+                <span class="text-danger small" data-valmsg-for="Email"></span>
+
+                <div class="password-wrapper mt-3">
+                    <input type="password" name="Password" class="form-control form-input" placeholder="Password"
+                        id="loginPassword" required />
+                    <span class="toggle-password" onclick="togglePassword('login')">
+                        <i id="loginToggleIcon" class="fa fa-eye-slash"></i>
+                    </span>
+                </div>
+                <span class="text-danger small" data-valmsg-for="Password"></span>
+
+                <div class="extra-links text-end mt-2">
+                    <a asp-controller="Account" asp-action="ForgotPassword" class="link-blue">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-login w-100 mt-3">Login</button>
+
+                <p class="text-center mt-3">
+                    <a asp-controller="Home" asp-action="Index" class="link-blue">Kembali ke Halaman Utama</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div class="auth-form hidden" id="registerForm">
+            <form asp-action="Register" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-2"></div>
+
+                <input type="text" name="Name" class="form-control form-input" placeholder="Full Name" required />
+                <span class="text-danger small" data-valmsg-for="Name"></span>
+
+                <input type="email" name="Email" class="form-control form-input mt-3" placeholder="Email" required />
+                <span class="text-danger small" data-valmsg-for="Email"></span>
+
+                <div class="password-wrapper mt-3">
+                    <input type="password" name="Password" class="form-control form-input" placeholder="Password"
+                        id="registerPassword" required />
+                    <span class="toggle-password" onclick="togglePassword('register')">
+                        <i id="registerToggleIcon" class="fa fa-eye-slash"></i>
+                    </span>
+                </div>
+                <span class="text-danger small" data-valmsg-for="Password"></span>
+
+                <div class="password-wrapper mt-3">
+                    <input type="password" name="ConfirmPassword" class="form-control form-input"
+                        placeholder="Confirm Password" id="confirmPassword" required />
+                    <span class="toggle-password" onclick="togglePassword('confirm')">
+                        <i id="confirmToggleIcon" class="fa fa-eye-slash"></i>
+                    </span>
+                </div>
+                <span class="text-danger small" data-valmsg-for="ConfirmPassword"></span>
+
+                <button type="submit" class="btn btn-login w-100 mt-3">Register</button>
+
+                <p class="text-center mt-3">
+                    <a asp-controller="Home" asp-action="Index" class="link-blue">Kembali ke Halaman Utama</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.auth-form {
+    animation: fadeInSlideUp 0.4s ease-in-out forwards;
+}
+
+.auth-form.hidden {
+    display: none;
+    animation: fadeOutSlideDown 0.4s ease-in-out forwards;
+}
+
+@@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@@keyframes fadeOutSlideDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+.toggle-btn-group {
+    display: flex;
+    gap: 12px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 24px;
+}
+
+.toggle-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 12px 0;
+    font-weight: 600;
+    color: #94a3b8;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.toggle-btn:hover {
+    color: #1e40af;
+}
+
+.toggle-btn.active {
+    color: #1e40af;
+}
+
+.toggle-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #1e40af;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #64748b;
+    font-size: 16px;
+}
+
+.toggle-password:hover {
+    color: #1e40af;
+}
+</style>
+
+@section Scripts {
+    <script>
+        let currentMode = 'login';
+
+        function switchMode(mode) {
+            if (currentMode === mode) return;
+
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginToggle = document.getElementById('loginToggle');
+            const registerToggle = document.getElementById('registerToggle');
+            const authTitle = document.getElementById('authTitle');
+
+            if (mode === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                loginToggle.classList.add('active');
+                registerToggle.classList.remove('active');
+                authTitle.textContent = 'Login Form';
+            } else {
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                registerToggle.classList.add('active');
+                loginToggle.classList.remove('active');
+                authTitle.textContent = 'Register Form';
+            }
+
+            currentMode = mode;
+        }
+
+        function togglePassword(type) {
+            let inputId, iconId;
+
+            if (type === 'login') {
+                inputId = 'loginPassword';
+                iconId = 'loginToggleIcon';
+            } else if (type === 'register') {
+                inputId = 'registerPassword';
+                iconId = 'registerToggleIcon';
+            } else if (type === 'confirm') {
+                inputId = 'confirmPassword';
+                iconId = 'confirmToggleIcon';
+            }
+
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            }
+        }
+    </script>
+
+    @await Html.PartialAsync("_ValidationScriptsPartial.cshtml")
+}

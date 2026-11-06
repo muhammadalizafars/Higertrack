@@ -80,6 +80,7 @@
 
             toggleButton?.addEventListener('click', function () {
                 navMenu.classList.toggle('active');
+                document.body.classList.toggle('mobile-nav-active');
 
                 // Toggle icon
                 if (this.classList.contains('bi-list')) {

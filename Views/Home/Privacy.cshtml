@@ -1,6 +1,159 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="privacy-container">
+    <div class="privacy-header">
+        <h1><i class="bi bi-shield-lock me-2"></i>@ViewData["Title"]</h1>
+        <p class="text-muted">Last updated: November 6, 2026</p>
+    </div>
+
+    <div class="privacy-content">
+        <section class="privacy-section">
+            <h3>1. Information We Collect</h3>
+            <p>
+                HigerTrack collects information you provide directly when you register an account, 
+                including your name, email address, and any map markers you create. We also collect 
+                location data (latitude and longitude) for markers you add to the system.
+            </p>
+        </section>
+
+        <section class="privacy-section">
+            <h3>2. How We Use Your Information</h3>
+            <ul>
+                <li>To provide and maintain our mapping service</li>
+                <li>To authenticate your account and prevent unauthorized access</li>
+                <li>To display map markers and associated information</li>
+                <li>To improve our services and user experience</li>
+                <li>To communicate with you about updates or changes to our service</li>
+            </ul>
+        </section>
+
+        <section class="privacy-section">
+            <h3>3. Data Storage and Security</h3>
+            <p>
+                Your data is stored securely in our database. We use industry-standard encryption 
+                for password storage and secure connections (HTTPS) for data transmission. Map marker 
+                images are stored in our secure server infrastructure.
+            </p>
+        </section>
+
+        <section class="privacy-section">
+            <h3>4. Data Sharing</h3>
+            <p>
+                We do not sell, trade, or rent your personal information to third parties. Map markers 
+                you create may be visible to other users based on your role permissions (Admin or User). 
+                Admin users can view all markers, while regular users can only view their own markers.
+            </p>
+        </section>
+
+        <section class="privacy-section">
+            <h3>5. Your Rights</h3>
+            <p>You have the right to:</p>
+            <ul>
+                <li>Access your personal data</li>
+                <li>Correct inaccurate data</li>
+                <li>Request deletion of your account and associated data</li>
+                <li>Export your map marker data</li>
+            </ul>
+        </section>
+
+        <section class="privacy-section">
+            <h3>6. Cookies and Tracking</h3>
+            <p>
+                HigerTrack uses session cookies to maintain your login state. We use Google Maps API 
+                which may set its own cookies according to Google's privacy policy. We do not use 
+                third-party advertising or tracking cookies.
+            </p>
+        </section>
+
+        <section class="privacy-section">
+            <h3>7. Password Reset</h3>
+            <p>
+                When you request a password reset, we generate a one-time OTP code that expires after 
+                10 minutes. This code is stored temporarily and deleted after use or expiration.
+            </p>
+        </section>
+
+        <section class="privacy-section">
+            <h3>8. Changes to This Policy</h3>
+            <p>
+                We may update this privacy policy from time to time. We will notify users of any 
+                material changes by updating the "Last updated" date at the top of this policy.
+            </p>
+        </section>
+
+        <section class="privacy-section">
+            <h3>9. Contact Us</h3>
+            <p>
+                If you have questions about this Privacy Policy or how we handle your data, 
+                please contact us at: <strong>support@higertrack.com</strong>
+            </p>
+        </section>
+    </div>
+</div>
+
+<style>
+.privacy-container {
+    max-width: 900px;
+    margin: 80px auto 40px;
+    padding: 20px;
+}
+
+.privacy-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.privacy-header h1 {
+    color: #1e40af;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.privacy-content {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.privacy-section {
+    margin-bottom: 32px;
+}
+
+.privacy-section h3 {
+    color: #0f172a;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.privacy-section p {
+    line-height: 1.7;
+    color: #475569;
+    margin-bottom: 12px;
+}
+
+.privacy-section ul {
+    padding-left: 24px;
+    color: #475569;
+    line-height: 1.8;
+}
+
+.privacy-section ul li {
+    margin-bottom: 8px;
+}
+
+@@media (max-width: 768px) {
+    .privacy-container {
+        margin: 60px auto 20px;
+        padding: 12px;
+    }
+
+    .privacy-content {
+        padding: 24px 16px;
+    }
+}
+</style>

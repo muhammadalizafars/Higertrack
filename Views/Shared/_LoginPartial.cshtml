@@ -12,6 +12,15 @@
 
 <nav class="navmenu">
     <ul>
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <li class="nav-item">
+                <a class="fw-bold text-white" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-speedometer2 me-1" style="font-size: 1.1rem;"></i> Dashboard
+                </a>
+            </li>
+        }
+
         @if (User.IsInRole("Admin"))
         {
             <li class="nav-item">
@@ -46,6 +55,11 @@
             <li>
                 <a class="fw-bold text-white" asp-controller="Account" asp-action="Login">
                     <i class="bi bi-person-fill me-2" style="font-size: 1.1rem;"></i> Login
+                </a>
+            </li>
+            <li>
+                <a class="fw-bold text-white" asp-controller="Account" asp-action="Register">
+                    <i class="bi bi-person-plus me-2" style="font-size: 1.1rem;"></i> Register
                 </a>
             </li>
         }

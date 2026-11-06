@@ -26,16 +26,19 @@ function initMap() {
 // DOM Event Bindings
 // =====================
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("entriesSelect").addEventListener("change", function () {
+    document.getElementById("entriesSelect")?.addEventListener("change", function () {
         pageSize = parseInt(this.value);
         currentPage = 1;
         loadMarkers();
     });
-    document.getElementById("btnSearch").addEventListener("click", function () {
+    document.getElementById("btnSearch")?.addEventListener("click", function () {
         currentPage = 1;
         loadMarkers();
     });
     setupAddMapModal();
+    
+    // Setup conditional button visibility
+    setupPermissionButtons();
 });
 
 // =====================
@@ -74,25 +77,28 @@ function renderMarkers(data) {
 function renderMarkerRow(item, index, tbody, modalsContainer) {
     const no = (currentPage - 1) * pageSize + index + 1;
     const imageTag = item.imageUrl
-        ? `<img src="${item.imageUrl}" class="img-thumbnail rounded shadow-sm" style="width:60px;height:60px;object-fit:cover;" />`
+        ? `<img src="${item.imageUrl}" class="img-thumbnail rounded shadow-sm" />`
         : "";
     const modalId = `editModal-${item.id}`;
+    const owner = item.createdBy ?? item.CreatedBy;
+    const canManage = canEditOrDelete(owner);
+    const actions = canManage
+        ? `<button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#${modalId}">Edit</button>
+           <button class="btn btn-sm btn-danger" onclick="deleteMarker(${item.id})">Hapus</button>`
+        : `<span class="text-muted">-</span>`;
     const row = `
         <tr>
             <td>${no}</td>
-            <td>${item.createdUserName ?? "-"}</td>
+            <td>${item.createdUserName ?? item.CreatedUserName ?? "-"}</td>
             <td><a href="#" class="title-link" data-index="${index}">${item.title}</a></td>
             <td>${item.latitude}, ${item.longitude}</td>
             <td>${imageTag}</td>
             <td>${item.description}</td>
-            <td>
-                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#${modalId}">Edit</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteMarker(${item.id})">Hapus</button>
-            </td>
+            <td>${actions}</td>
         </tr>`;
     const modal = getEditModalHtml(item, modalId);
     tbody.insertAdjacentHTML("beforeend", row);
-    modalsContainer.insertAdjacentHTML("beforeend", modal);
+    if (canManage) modalsContainer.insertAdjacentHTML("beforeend", modal);
 }
 
 function getEditModalHtml(item, modalId) {
@@ -281,6 +287,29 @@ function setupEditMapModal(item) {
 function setEditLatLng(id, lat, lng) {
     document.getElementById(`edit-lat-${id}`).value = lat;
     document.getElementById(`edit-lng-${id}`).value = lng;
+}
+
+// =====================
+// Permission Handling
+// =====================
+function setupPermissionButtons() {
+    const mainContent = document.querySelector('.main-content');
+    if (!mainContent) return;
+    
+    const userRole = mainContent.dataset.role;
+    const currentUserId = mainContent.dataset.userId;
+    
+    // Store globally for use in renderMarkerRow
+    window.currentUserRole = userRole;
+    window.currentUserId = currentUserId;
+}
+
+function canEditOrDelete(createdBy) {
+    const userRole = window.currentUserRole;
+    const currentUserId = window.currentUserId;
+    
+    if (userRole === 'Admin') return true;
+    return currentUserId === createdBy;
 }
 
 // =====================

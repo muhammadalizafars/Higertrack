@@ -23,12 +23,18 @@ namespace HigerTrack.Controllers
             _env = env;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var mapPoints = _context.MapPoints
-                .Include(mp => mp.CreatedUser)
-                .ToList();
-            return View(mapPoints);
+            var today = DateTime.UtcNow.Date;
+
+            var viewModel = new HigerTrack.ViewModels.DashboardViewModel
+            {
+                TotalPoints = await _context.MapPoints.CountAsync(),
+                TotalUsers = await _context.Users.CountAsync(),
+                PointsToday = await _context.MapPoints.CountAsync(mp => mp.CreatedAt >= today)
+            };
+
+            return View(viewModel);
         }
 
         [Authorize]
@@ -37,22 +43,18 @@ namespace HigerTrack.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Admin()
         {
-            var mapPoints = _context.MapPoints
-                .Include(mp => mp.CreatedUser)
-                .ToList();
-            return View(mapPoints);
+            ViewBag.UserRole = "Admin";
+            ViewBag.CurrentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return View();
         }
 
         [Authorize(Roles = "User")]
         [ActionName("User")]
         public IActionResult UserMapPoints()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var mapPoints = _context.MapPoints
-                .Where(mp => mp.CreatedBy == userId)
-                .Include(mp => mp.CreatedUser)
-                .ToList();
-            return View("User", mapPoints);
+            ViewBag.UserRole = "User";
+            ViewBag.CurrentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return View("User");
         }
 
         [HttpPost]
