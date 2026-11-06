@@ -1,4 +1,4 @@
-﻿﻿@using HigerTrack.ViewModels;
+﻿@using HigerTrack.ViewModels;
 @model LoginViewModel;
 
 @{
@@ -26,6 +26,11 @@
             @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
+            }
+
             <input asp-for="Email" class="form-control form-input" placeholder="Email Address" />
             <span asp-validation-for="Email" class="text-danger"></span>
 
@@ -39,9 +44,7 @@
             <span asp-validation-for="Password" class="text-danger"></span>
 
             <div class="extra-links text-end mt-2">
-                <a asp-controller="Account" asp-action="ChangePassword" class="link-blue">Change
-                    password</a><br /><br />
-                <a asp-controller="Account" asp-action="VerifyEmail" class="link-blue">Forgot password?</a>
+                <a asp-controller="Account" asp-action="ForgotPassword" class="link-blue">Forgot password?</a>
             </div>
 
             <input type="submit" value="Login" class="btn btn-login w-100 mt-3" />

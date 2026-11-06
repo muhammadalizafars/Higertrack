@@ -1,0 +1,88 @@
+@{
+    ViewData["Title"] = "OTP Confirmation";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="logo-container text-center">
+            <img src="~/img/Logo/LogoHigertrack.PNG" alt="Logo" class="logo-img" />
+            <h2 class="login-title">OTP Confirmation</h2>
+        </div>
+
+        <div class="alert alert-info text-center">
+            <p class="mb-1">@ViewBag.Message</p>
+            <p class="mb-1"><strong>Expires in: @ViewBag.ExpiresIn</strong></p>
+        </div>
+
+        <div class="otp-box">
+            <label class="otp-label">Your OTP:</label>
+            <div class="otp-value">
+                <span id="otpCode">@ViewBag.Otp</span>
+                <button type="button" class="btn-copy" onclick="copyOtp()">Copy</button>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <p class="small text-muted">Email: @ViewBag.Email</p>
+        </div>
+
+        <div class="text-center mt-3">
+            <a asp-controller="Account" asp-action="ResetPassword" class="btn btn-login w-100">Continue to Reset Password</a>
+        </div>
+
+        <div class="text-center mt-3">
+            <a asp-controller="Account" asp-action="Login" class="link-blue">Back to Login</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .otp-box {
+        margin: 20px 0;
+    }
+    .otp-label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+    .otp-value {
+        display: flex;
+        align-items: center;
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        gap: 10px;
+    }
+    #otpCode {
+        flex: 1;
+        word-break: break-all;
+        font-family: monospace;
+        font-size: 1.5em;
+        letter-spacing: 2px;
+        text-align: center;
+        color: #007bff;
+        font-weight: bold;
+    }
+    .btn-copy {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn-copy:hover {
+        background: #0056b3;
+    }
+</style>
+
+<script>
+    function copyOtp() {
+        var text = document.getElementById('otpCode').innerText;
+        navigator.clipboard.writeText(text).then(function() {
+            alert('OTP copied!');
+        });
+    }
+</script>

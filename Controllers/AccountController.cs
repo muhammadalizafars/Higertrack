@@ -1,5 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using HigerTrack.Data;
 using HigerTrack.Models;
 using HigerTrack.ViewModels;
 
@@ -10,12 +16,16 @@ namespace HigerTrack.Controllers
         private readonly SignInManager<Users> signInManager;
         private readonly UserManager<Users> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly AppDbContext context;
+        private readonly IConfiguration config;
 
-        public AccountController(SignInManager<Users> signInManager, UserManager<Users> userManager, RoleManager<IdentityRole> roleManager)
+        public AccountController(SignInManager<Users> signInManager, UserManager<Users> userManager, RoleManager<IdentityRole> roleManager, AppDbContext context, IConfiguration config)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
             this.roleManager = roleManager;
+            this.context = context;
+            this.config = config;
         }
 
         [HttpGet]
@@ -95,76 +105,108 @@ namespace HigerTrack.Controllers
         }
 
         [HttpGet]
-        public IActionResult VerifyEmail()
+        public IActionResult ForgotPassword()
         {
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> VerifyEmail(VerifyEmailViewModel model)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var user = await userManager.FindByNameAsync(model.Email);
+            var user = await userManager.FindByEmailAsync(model.Email);
 
             if (user == null)
             {
                 ModelState.AddModelError("", "User not found!");
                 return View(model);
             }
-            else
+
+            // Generate 6-digit OTP
+            var random = new Random();
+            var otp = random.Next(100000, 999999).ToString();
+
+            // Save OTP to DB
+            var resetOtp = new PasswordResetOtp
             {
-                return RedirectToAction("ChangePassword", "Account", new { username = user.UserName });
-            }
+                Email = user.Email,
+                Otp = otp,
+                ExpiryDate = DateTime.UtcNow.AddMinutes(10),
+                CreatedAt = DateTime.UtcNow
+            };
+
+            context.PasswordResetOtps.Add(resetOtp);
+            await context.SaveChangesAsync();
+
+            // Display OTP (in real app, send via email)
+            ViewBag.Otp = otp;
+            ViewBag.Email = user.Email;
+            ViewBag.Message = "OTP has been generated. Use this code to reset your password.";
+            ViewBag.ExpiresIn = "10 minutes";
+
+            return View("OtpConfirmation");
         }
 
         [HttpGet]
-        public IActionResult ChangePassword(string username)
+        public IActionResult ResetPassword()
         {
-            if (string.IsNullOrEmpty(username))
-            {
-                return RedirectToAction("VerifyEmail", "Account");
-            }
-
-            return View(new ChangePasswordViewModel { Email = username });
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Something went wrong");
                 return View(model);
             }
 
-            var user = await userManager.FindByNameAsync(model.Email);
+            // Find OTP in DB
+            var otpRecord = await context.PasswordResetOtps
+                .FirstOrDefaultAsync(o => o.Otp == model.Otp && o.Email == model.Email && o.ExpiryDate > DateTime.UtcNow);
 
+            if (otpRecord == null)
+            {
+                ModelState.AddModelError("", "Invalid or expired OTP.");
+                return View(model);
+            }
+
+            var user = await userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                ModelState.AddModelError("", "User not found!");
+                ModelState.AddModelError("", "User not found.");
                 return View(model);
             }
 
-            var result = await userManager.RemovePasswordAsync(user);
-            if (result.Succeeded)
+            // Reset password
+            var removeResult = await userManager.RemovePasswordAsync(user);
+            if (!removeResult.Succeeded)
             {
-                result = await userManager.AddPasswordAsync(user, model.NewPassword);
-                return RedirectToAction("Login", "Account");
-            }
-            else
-            {
-                foreach (var error in result.Errors)
-                {
+                foreach (var error in removeResult.Errors)
                     ModelState.AddModelError("", error.Description);
-                }
-
                 return View(model);
             }
+
+            var addResult = await userManager.AddPasswordAsync(user, model.NewPassword);
+            if (!addResult.Succeeded)
+            {
+                foreach (var error in addResult.Errors)
+                    ModelState.AddModelError("", error.Description);
+                return View(model);
+            }
+
+            // Delete used OTP
+            context.PasswordResetOtps.Remove(otpRecord);
+            await context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Password has been reset successfully.";
+            return RedirectToAction("Login", "Account");
         }
 
         [HttpPost]

@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - HigerTrack</title>
     <script type="importmap"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HigerTrack.styles.css" asp-append-version="true" />
@@ -20,61 +23,12 @@
 
 </head>
 
-
-<style>
-    /* Nomal menu display */
-    .navmenu ul {
-        display: flex;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Hamburger Icon */
-    .mobile-nav-toggle {
-        font-size: 28px;
-        cursor: pointer;
-        color: white;
-        margin-left: 20px;
-        display: none;
-    }
-
-    /* Responsive Menu */
-    @@media (max-width: 992px) {
-        .navmenu ul {
-            display: none;
-            flex-direction: column;
-            background-color: #333;
-            position: absolute;
-            top: 60px;
-            right: 10px;
-            width: 200px;
-            border-radius: 8px;
-            padding: 10px;
-            z-index: 1000;
-        }
-
-        .navmenu.active ul {
-            display: flex;
-        }
-
-        .mobile-nav-toggle {
-            display: block;
-        }
-
-        .navmenu ul li {
-            margin: 10px 0;
-        }
-    }
-</style>
-
 <body>
     <header id="header" class="header d-flex align-items-center fixed-top mb-5">
         <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-            <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
-                <img src="@Url.Content("~/img/Logo/LogoHigertrack.png")" alt="Higertrack Logo"
-                    style="height: auto; max-height: 60px; margin-right: 10px;">
-                <span class="fw-bold text-white" style="font-size: 24px;">HigerTrack</span>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="@Url.Content("~/img/Logo/LogoHigertrack.png")" alt="Higertrack Logo">
+                <span>HigerTrack</span>
             </a>
 
 
@@ -90,24 +44,29 @@
                     }
                     <partial name="_LoginPartial" />
                 </ul>
-                <i id="mobile-nav-toggle" class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                
             </nav>
+            <i class="mobile-nav-toggle bi bi-list"></i>
         </div>
     </header>
 
 
 
 
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="container-xxl">
+        <main role="main" class="pb-5 pt-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container d-flex justify-content-between">
-            <span>&copy; 2025 HigerTrack</span>
-            <span class="text-muted">Version 1.0.0</span>
+    <footer class="footer">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center">
+            <span>&copy; @DateTime.Now.Year HigerTrack. All rights reserved.</span>
+            <div class="d-flex gap-3">
+                <a href="#" class="text-muted text-decoration-none small">Privacy</a>
+                <a href="#" class="text-muted text-decoration-none small">Terms</a>
+                <a href="#" class="text-muted text-decoration-none small">Contact</a>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -116,19 +75,19 @@
     @await RenderSectionAsync("Scripts", required: false)
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const toggleButton = document.getElementById('mobile-nav-toggle');
+            const toggleButton = document.querySelector('.mobile-nav-toggle');
             const navMenu = document.getElementById('navmenu');
 
-            toggleButton.addEventListener('click', function () {
+            toggleButton?.addEventListener('click', function () {
                 navMenu.classList.toggle('active');
 
                 // Toggle icon
-                if (toggleButton.classList.contains('bi-list')) {
-                    toggleButton.classList.remove('bi-list');
-                    toggleButton.classList.add('bi-x'); // Icon close
+                if (this.classList.contains('bi-list')) {
+                    this.classList.remove('bi-list');
+                    this.classList.add('bi-x'); // Icon close
                 } else {
-                    toggleButton.classList.remove('bi-x');
-                    toggleButton.classList.add('bi-list');
+                    this.classList.remove('bi-x');
+                    this.classList.add('bi-list');
                 }
             });
         });

@@ -10,6 +10,8 @@ namespace HigerTrack.Data
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
+        public DbSet<PasswordResetOtp> PasswordResetOtps { get; set; }
+
         public DbSet<MapPoint> MapPoints { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

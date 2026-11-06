@@ -51,8 +51,32 @@ cache/
 
 /wwwroot/uploads/
 
-# Ignore appsettings files
+# Environment & secrets
+.env
+.env.local
+.env.*.local
 appsettings.json
-appsettings.Development.json
+appsettings.*.json
+!appsettings.Development.json
+secrets.json
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Temp files
+*.swp
+*.swo
+*~
+.tmp/
+
+# User/IDE local
+*.ldb
 
 Migrations/
